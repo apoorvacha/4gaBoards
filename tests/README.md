@@ -4,26 +4,43 @@ End-to-end tests for 4ga Boards using [Playwright](https://playwright.dev/).
 
 ## Prerequisites
 
-- Node.js 18+
-- pnpm
+- Node.js >= 24.11 ([download](https://nodejs.org/))
+- pnpm >= 11.1.2
 - Docker (for running the app locally)
 - The application running at `http://localhost:3000`
 
 ## Setup
 
-1. Install dependencies:
+1. Install or upgrade Node.js (v24.11+):
+
+```bash
+# Check current version
+node --version
+
+# Install/upgrade via nvm (recommended)
+nvm install 24
+nvm use 24
+```
+
+2. Install pnpm (if not already installed):
+
+```bash
+npm install -g pnpm@11
+```
+
+2. Install dependencies:
 
 ```bash
 pnpm install
 ```
 
-2. Install Playwright browsers:
+3. Install Playwright browsers:
 
 ```bash
 pnpm -C tests test:install
 ```
 
-3. Start the application (from the project root):
+4. Start the application (from the project root):
 
 ```bash
 docker compose -f docker-compose-dev.yml up
