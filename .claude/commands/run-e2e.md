@@ -42,7 +42,7 @@ node -e "fetch('http://localhost:3000').then(r => console.log('OK: ' + r.status)
 - If OK: continue.
 - If UNREACHABLE: tell the user the app needs to be running at http://localhost:3000. Suggest starting it with:
   ```
-  docker compose -f docker-compose-dev.yml up
+    docker compose -f docker-compose.yml up
   ```
   Wait for the user to confirm the app is running before continuing.
 

@@ -95,8 +95,8 @@ test.describe('TC08: Reorder Lists (Drag-and-Drop) - Role Based Access', () => {
 
 test.describe('TC09: Collapse/Expand a List - Role Based Access', () => {
   for (const role of ROLES) {
-    // TEST: Verify collapse/expand is only functional for editors
-    // RESULT: Editors can collapse a list (shows expand button) and expand it back; non-editors clicking collapse has no effect
+    // TEST: Verify collapse/expand works for all board members (it is a view preference, not an edit action)
+    // RESULT: All members can collapse and expand a list
     test(`${role.name} - collapse/expand list behavior`, async ({ page }) => {
       await loginAndNavigateToBoard(page, role.user.username, role.user.password);
       const listPage = new ListPage(page);
@@ -117,10 +117,15 @@ test.describe('TC09: Collapse/Expand a List - Role Based Access', () => {
         await listPage.deleteList(listName);
         await expect(listPage.listTitle(listName)).toHaveCount(0, { timeout: 5000 });
       } else {
+        // Non-editors can also collapse/expand (it's a view preference)
         const collapseButton = page.getByTitle('Collapse List').first();
         await expect(collapseButton).toBeVisible({ timeout: 3000 });
         await collapseButton.click();
-        await expect(page.getByTitle('Expand List')).toHaveCount(0, { timeout: 2000 });
+        await expect(page.getByTitle('Expand List').first()).toBeVisible({ timeout: 3000 });
+
+        // Expand it back to restore state
+        await page.getByTitle('Expand List').first().click();
+        await expect(page.getByTitle('Collapse List').first()).toBeVisible({ timeout: 3000 });
       }
     });
   }

@@ -4,6 +4,7 @@ import { ADMIN, TEST_PROJECT_NAME } from './testData';
 
 export const BASE_URL = 'http://localhost:3000';
 export const BOARD_01 = 'Board 01';
+export const LIST_01 = 'List 01';
 
 export async function loginToDashboard(page: Page, username: string, password: string): Promise<void> {
   const loginPage = new LoginPage(page);

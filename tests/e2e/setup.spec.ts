@@ -1,6 +1,6 @@
 import { test, request } from '@playwright/test';
 import { ADMIN, TEST_USERS, TEST_PROJECT_NAME } from './testData';
-import { BASE_URL, BOARD_01 } from './utils';
+import { BASE_URL, BOARD_01, LIST_01 } from './utils';
 
 test('seed test users and assign roles', async () => {
   const apiContext = await request.newContext();
@@ -53,6 +53,26 @@ test('seed test users and assign roles', async () => {
 
   console.log(`[Setup] Project: "${project.name}" (${project.id}), Board: "${firstBoard.name}" (${firstBoard.id})`);
 
+  // 3b. Find or create "List 01" in the board
+  const boardRes2 = await apiContext.get(`${BASE_URL}/api/boards/${firstBoard.id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const boardBody = await boardRes2.json();
+  let firstList = boardBody.included.lists.find((l: any) => l.name === LIST_01);
+
+  if (!firstList) {
+    const createListRes = await apiContext.post(`${BASE_URL}/api/boards/${firstBoard.id}/lists`, {
+      headers: { Authorization: `Bearer ${token}` },
+      data: { name: LIST_01, position: 65536, isCollapsed: false },
+    });
+    if (!createListRes.ok()) {
+      throw new Error(`Failed to create list: ${createListRes.status()} ${await createListRes.text()}`);
+    }
+    const createListBody = await createListRes.json();
+    firstList = createListBody.item;
+    console.log(`[Setup] Created list: "${firstList.name}" (${firstList.id})`);
+  }
+
   // 4. Create users (idempotent — skips if already exists)
   const userIds: Record<string, string> = {};
   for (const [role, userData] of Object.entries(TEST_USERS)) {
@@ -78,30 +98,43 @@ test('seed test users and assign roles', async () => {
 
   console.log(`[Setup] Users: pm=${userIds.pm}, editor=${userIds.editor}, commenter=${userIds.commenter}, viewer=${userIds.viewer}, nonMember=${userIds.nonMember}`);
 
-  // 5. Assign roles (idempotent — 409 means already assigned)
+  // 5. Assign roles (create or reset to correct role)
   // PM → Project Manager
   await apiContext.post(`${BASE_URL}/api/projects/${project.id}/managers`, {
     headers: { Authorization: `Bearer ${token}` },
     data: { userId: userIds.pm },
   });
 
+  // Helper: create membership or reset existing one to the correct role
+  const ensureMembership = async (userId: string, role: string, canComment?: boolean) => {
+    const createRes = await apiContext.post(`${BASE_URL}/api/boards/${firstBoard.id}/memberships`, {
+      headers: { Authorization: `Bearer ${token}` },
+      data: { userId, role, ...(canComment !== undefined && { canComment }) },
+    });
+    if (createRes.status() === 409) {
+      // Membership exists — find it and patch to the correct role
+      const boardRes = await apiContext.get(`${BASE_URL}/api/boards/${firstBoard.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const boardData = await boardRes.json();
+      const membership = boardData.included.boardMemberships.find((bm: any) => bm.userId === userId);
+      if (membership) {
+        await apiContext.patch(`${BASE_URL}/api/board-memberships/${membership.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+          data: { role, ...(canComment !== undefined && { canComment }) },
+        });
+      }
+    }
+  };
+
   // Editor → Board editor
-  await apiContext.post(`${BASE_URL}/api/boards/${firstBoard.id}/memberships`, {
-    headers: { Authorization: `Bearer ${token}` },
-    data: { userId: userIds.editor, role: 'editor' },
-  });
+  await ensureMembership(userIds.editor, 'editor');
 
   // Commenter → Board viewer with canComment
-  await apiContext.post(`${BASE_URL}/api/boards/${firstBoard.id}/memberships`, {
-    headers: { Authorization: `Bearer ${token}` },
-    data: { userId: userIds.commenter, role: 'viewer', canComment: true },
-  });
+  await ensureMembership(userIds.commenter, 'viewer', true);
 
   // Viewer → Board viewer without canComment
-  await apiContext.post(`${BASE_URL}/api/boards/${firstBoard.id}/memberships`, {
-    headers: { Authorization: `Bearer ${token}` },
-    data: { userId: userIds.viewer, role: 'viewer', canComment: false },
-  });
+  await ensureMembership(userIds.viewer, 'viewer', false);
 
   console.log('[Setup] Roles assigned successfully');
 

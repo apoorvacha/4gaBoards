@@ -28,22 +28,22 @@ nvm use 24
 npm install -g pnpm@11
 ```
 
-2. Install dependencies:
+3. Install dependencies:
 
 ```bash
 pnpm install
 ```
 
-3. Install Playwright browsers:
+4. Install Playwright browsers:
 
 ```bash
 pnpm -C tests test:install
 ```
 
-4. Start the application (from the project root):
+5. Start the application (from the project root):
 
 ```bash
-docker compose -f docker-compose-dev.yml up
+docker compose -f docker-compose.yml up
 ```
 
 ## Running Tests
@@ -162,19 +162,46 @@ The setup spec (`setup.spec.ts`) runs before all tests and creates the following
 
 All passwords for test users: `Test@12345`
 
-## CI
-
-Tests run in GitHub Actions via:
-
-```bash
-pnpm ci:test:e2e
-```
-
-This uses `start-server-and-test` to spin up the server before running Playwright.
-
 ## Notes
 
 - Tests use Chromium by default (configured in `playwright.config.ts`)
 - The setup project runs as a dependency before all test specs
 - When running in parallel (default), some tests may flake due to server load — use `--workers=1` for reliable runs
 - WebSocket/real-time tests (TC25-TC29) use multiple browser contexts to simulate concurrent sessions
+
+## Agentic AI Usage
+
+This E2E test suite was authored using agentic AI (Claude Code) with the following workflow:
+
+1. **Functional Flow Analysis** — Used AI to understand the application's architecture, user workflows, and feature interactions. The output is documented in `docs/FUNCTIONAL_FLOW.md`.
+
+2. **E2E Strategy** — Used AI to narrow down the most important features to test and prioritize coverage. The result is stored in `docs/E2E_TEST_STRATEGY.md`.
+
+3. **Test Procedure** — A structured test procedure document was created using the skill at `docs/CREATE_TEST_PROCEDURE.md`. The resulting test plan lives at `docs/TEST_PROCEDURE_BOARD_LIST.md`.
+
+4. **Test Implementation** — Worked on implementing the tests by keeping a human in the loop for every test added. Provided the initial test stubs and progressed while improving test readability and reusability. Followed one test at a time while reviewing, optimizing, and identifying issues with the tests.
+
+5. **Setup & Run Skill** — A Claude Code skill at `.claude/commands/run-e2e.md` automates environment setup (Node.js, pnpm, Playwright browsers) and provides guided test execution for anyone cloning the repo.
+
+**Manual Interventions:**
+- Understood what AI assumes: existing users, project, list, and board
+- Identified reusable functions and extracted them into shared utilities
+- Understood system flaws: PM removal in UI allows confirmation but silently fails (no error shown)
+- Added teardown and cleanups when AI missed them
+- Created interactive and platform-agnostic skill file to get the project set up and running
+- Stepped in when AI used keyboard interactions instead of UI to achieve an action
+- Guided AI to find correct selectors by reading React component source code in `client/src`
+- Assisted AI in creating platform Agnostic test setup skill file
+
+
+
+
+### Key files
+
+| File | Purpose |
+|------|---------|
+| `docs/FUNCTIONAL_FLOW.md` | AI-generated analysis of application architecture and user workflows |
+| `docs/E2E_TEST_STRATEGY.md` | AI-assisted prioritization of features for E2E coverage |
+| `docs/CREATE_TEST_PROCEDURE.md` | Skill used to generate structured test procedures |
+| `docs/TEST_PROCEDURE_BOARD_LIST.md` | The test procedure that defines all test cases (TC01-TC29) |
+| `.claude/commands/run-e2e.md` | Skill to set up prerequisites and run E2E tests |

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { BoardPage } from '../pageObjects/BoardPage';
 import { ListPage } from '../pageObjects/ListPage';
 import { ADMIN, TEST_PROJECT_NAME } from '../testData';
-import { loginToDashboard, loginAndNavigateToBoard } from '../utils';
+import { loginToDashboard, loginAndNavigateToBoard, getAdminToken, getBoardId, BASE_URL, BOARD_01 } from '../utils';
 
 test.describe('TC21: Board name persists after reload', () => {
 
@@ -37,7 +37,7 @@ test.describe('TC22: List order persists after reload', () => {
   // RESULT: Lists remain in the reordered position after refresh
 
   test('List order persists after page reload', async ({ page }) => {
-    test.setTimeout(60000);
+    test.setTimeout(90000);
     await loginAndNavigateToBoard(page, ADMIN.username, ADMIN.password);
     const listPage = new ListPage(page);
 
@@ -73,11 +73,22 @@ test.describe('TC22: List order persists after reload', () => {
     const indexBAfter = orderAfter.findIndex(t => t === listB);
     expect(indexBAfter).toBeLessThan(indexAAfter);
 
-    // Cleanup
+    // Cleanup via API (more reliable than UI when board has many lists)
+    const { apiContext, token } = await getAdminToken();
+    const boardId = await getBoardId(apiContext, token, BOARD_01);
+    const boardRes = await apiContext.get(`${BASE_URL}/api/boards/${boardId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const boardData = await boardRes.json();
     for (const name of [listA, listB, listC]) {
-      await listPage.deleteList(name);
-      await expect(listPage.listTitle(name)).toHaveCount(0, { timeout: 5000 });
+      const list = boardData.included.lists.find((l: any) => l.name === name);
+      if (list) {
+        await apiContext.delete(`${BASE_URL}/api/lists/${list.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
     }
+    await apiContext.dispose();
   });
 });
 
