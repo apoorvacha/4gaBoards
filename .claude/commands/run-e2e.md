@@ -28,6 +28,10 @@ Ask the user: "Can I install Playwright browsers with `pnpm -C tests test:instal
 
 If they agree, run `pnpm -C tests test:install`.
 
+Then check if the OS is Linux by running `uname -s`. If it returns "Linux", ask the user: "On Linux, Playwright needs system dependencies (requires sudo). Can I run `npx playwright install-deps` to install them?"
+
+If they agree, run `cd tests && npx playwright install-deps`.
+
 ## 5. Check if the application is running
 
 Run:
