@@ -65,7 +65,7 @@ From the `tests/` directory:
 pnpm test
 
 # Run a specific spec file
-npx playwright test e2e/specs/boardOperations.spec.ts
+npx playwright test e2e/specs/boardListOperations/boardOperations.spec.ts
 
 # Run tests in headed mode (visible browser)
 pnpm test:headed
@@ -99,13 +99,14 @@ tests/
 │   └── specs/
 │       ├── login.spec.ts              # Basic login test
 │       ├── addUser.spec.ts            # User creation test
-│       ├── boardOperations.spec.ts    # TC01-TC05: Board CRUD (role-based)
-│       ├── listOperations.spec.ts     # TC06-TC10: List CRUD (role-based)
-│       ├── pmBehavior.spec.ts         # TC11-TC13: Project Manager behavior
-│       ├── dynamicRoleChanges.spec.ts # TC14-TC16: Role upgrades/downgrades
-│       ├── validationTests.spec.ts    # TC17-TC20: Input validation
-│       ├── persistenceTests.spec.ts   # TC21-TC24: Data persists after reload
-│       └── realTimeTests.spec.ts      # TC25-TC29: WebSocket broadcasts
+│       └── boardListOperations/
+│           ├── boardOperations.spec.ts    # TC01-TC05: Board CRUD (role-based)
+│           ├── listOperations.spec.ts     # TC06-TC10: List CRUD (role-based)
+│           ├── pmBehavior.spec.ts         # TC11-TC13: Project Manager behavior
+│           ├── dynamicRoleChanges.spec.ts # TC14-TC16: Role upgrades/downgrades
+│           ├── validationTests.spec.ts    # TC17-TC20: Input validation
+│           ├── persistenceTests.spec.ts   # TC21-TC24: Data persists after reload
+│           └── realTimeTests.spec.ts      # TC25-TC29: WebSocket broadcasts
 └── playwright.config.ts           # Playwright configuration
 ```
 
@@ -113,35 +114,35 @@ tests/
 
 | ID | Test | Spec File |
 |----|------|-----------|
-| TC01 | Create Board (role-based) | boardOperations.spec.ts |
-| TC02 | Rename Board (role-based) | boardOperations.spec.ts |
-| TC03 | Delete Board (role-based) | boardOperations.spec.ts |
-| TC04 | View Board (role-based) | boardOperations.spec.ts |
-| TC05 | Manage Board Memberships (role-based) | boardOperations.spec.ts |
-| TC06 | Create List (role-based) | listOperations.spec.ts |
-| TC07 | Rename List (role-based) | listOperations.spec.ts |
-| TC08 | Reorder Lists - drag-and-drop (role-based) | listOperations.spec.ts |
-| TC09 | Collapse/Expand List (role-based) | listOperations.spec.ts |
-| TC10 | Delete List (role-based) | listOperations.spec.ts |
-| TC11 | PM has auto-editor on all boards | pmBehavior.spec.ts |
-| TC12 | PM cannot be removed from board | pmBehavior.spec.ts |
-| TC13 | Promoting user to PM grants board access | pmBehavior.spec.ts |
-| TC14 | Role upgrade: Viewer to Editor | dynamicRoleChanges.spec.ts |
-| TC15 | Role downgrade: Editor to Viewer | dynamicRoleChanges.spec.ts |
-| TC16 | Membership revocation | dynamicRoleChanges.spec.ts |
-| TC17 | Reject board creation with empty name | validationTests.spec.ts |
-| TC18 | Reject list creation with empty name | validationTests.spec.ts |
-| TC19 | Accept duplicate list names | validationTests.spec.ts |
-| TC20 | Long list name handling | validationTests.spec.ts |
-| TC21 | Board name persists after reload | persistenceTests.spec.ts |
-| TC22 | List order persists after reload | persistenceTests.spec.ts |
-| TC23 | Collapsed state persists after reload | persistenceTests.spec.ts |
-| TC24 | Deleted list does not reappear | persistenceTests.spec.ts |
-| TC25 | List creation broadcasts (WebSocket) | realTimeTests.spec.ts |
-| TC26 | List deletion broadcasts (WebSocket) | realTimeTests.spec.ts |
-| TC27 | List rename broadcasts (WebSocket) | realTimeTests.spec.ts |
-| TC28 | List reorder broadcasts (WebSocket) | realTimeTests.spec.ts |
-| TC29 | Board deletion notifies members (WebSocket) | realTimeTests.spec.ts |
+| TC01 | Create Board (role-based) | boardListOperations/boardOperations.spec.ts |
+| TC02 | Rename Board (role-based) | boardListOperations/boardOperations.spec.ts |
+| TC03 | Delete Board (role-based) | boardListOperations/boardOperations.spec.ts |
+| TC04 | View Board (role-based) | boardListOperations/boardOperations.spec.ts |
+| TC05 | Manage Board Memberships (role-based) | boardListOperations/boardOperations.spec.ts |
+| TC06 | Create List (role-based) | boardListOperations/listOperations.spec.ts |
+| TC07 | Rename List (role-based) | boardListOperations/listOperations.spec.ts |
+| TC08 | Reorder Lists - drag-and-drop (role-based) | boardListOperations/listOperations.spec.ts |
+| TC09 | Collapse/Expand List (role-based) | boardListOperations/listOperations.spec.ts |
+| TC10 | Delete List (role-based) | boardListOperations/listOperations.spec.ts |
+| TC11 | PM has auto-editor on all boards | boardListOperations/pmBehavior.spec.ts |
+| TC12 | PM cannot be removed from board | boardListOperations/pmBehavior.spec.ts |
+| TC13 | Promoting user to PM grants board access | boardListOperations/pmBehavior.spec.ts |
+| TC14 | Role upgrade: Viewer to Editor | boardListOperations/dynamicRoleChanges.spec.ts |
+| TC15 | Role downgrade: Editor to Viewer | boardListOperations/dynamicRoleChanges.spec.ts |
+| TC16 | Membership revocation | boardListOperations/dynamicRoleChanges.spec.ts |
+| TC17 | Reject board creation with empty name | boardListOperations/validationTests.spec.ts |
+| TC18 | Reject list creation with empty name | boardListOperations/validationTests.spec.ts |
+| TC19 | Accept duplicate list names | boardListOperations/validationTests.spec.ts |
+| TC20 | Long list name handling | boardListOperations/validationTests.spec.ts |
+| TC21 | Board name persists after reload | boardListOperations/persistenceTests.spec.ts |
+| TC22 | List order persists after reload | boardListOperations/persistenceTests.spec.ts |
+| TC23 | Collapsed state persists after reload | boardListOperations/persistenceTests.spec.ts |
+| TC24 | Deleted list does not reappear | boardListOperations/persistenceTests.spec.ts |
+| TC25 | List creation broadcasts (WebSocket) | boardListOperations/realTimeTests.spec.ts |
+| TC26 | List deletion broadcasts (WebSocket) | boardListOperations/realTimeTests.spec.ts |
+| TC27 | List rename broadcasts (WebSocket) | boardListOperations/realTimeTests.spec.ts |
+| TC28 | List reorder broadcasts (WebSocket) | boardListOperations/realTimeTests.spec.ts |
+| TC29 | Board deletion notifies members (WebSocket) | boardListOperations/realTimeTests.spec.ts |
 
 ## Test Data
 

@@ -55,7 +55,7 @@ Ask the user how they want to run the tests. Present these options:
 - **Headed mode (see the browser)** — `pnpm -C tests test:headed`
 - **UI mode (interactive Playwright panel)** — `pnpm -C tests test:ui`
 - **Debug mode (step through tests)** — `pnpm -C tests test:debug`
-- **Specific spec file** — ask which file from: `boardOperations`, `listOperations`, `pmBehavior`, `dynamicRoleChanges`, `validationTests`, `persistenceTests`, `realTimeTests`, `login`, `addUser`. Then run `pnpm -C tests exec playwright test e2e/specs/<chosen>.spec.ts`
+- **Specific spec file** — ask which file from: `login`, `addUser`, `boardOperations`, `listOperations`, `pmBehavior`, `dynamicRoleChanges`, `validationTests`, `persistenceTests`, `realTimeTests`. For `login` or `addUser`, run `pnpm -C tests exec playwright test e2e/specs/<chosen>.spec.ts`. For all others, run `pnpm -C tests exec playwright test e2e/specs/boardListOperations/<chosen>.spec.ts`
 - **View last test report** — `pnpm -C tests test:report`
 
 ## 7. Run and report
