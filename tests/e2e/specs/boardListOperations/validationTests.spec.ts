@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { BoardPage } from '../pageObjects/BoardPage';
-import { ListPage } from '../pageObjects/ListPage';
-import { ADMIN, TEST_PROJECT_NAME } from '../testData';
-import { BOARD_01, loginToDashboard, loginAndNavigateToBoard } from '../utils';
+import { BoardPage } from '../../pageObjects/BoardPage';
+import { ListPage } from '../../pageObjects/ListPage';
+import { ADMIN, TEST_PROJECT_NAME } from '../../testData';
+import { BOARD_01, loginToDashboard, loginAndNavigateToBoard } from '../../utils';
 
 test.describe('TC17: Reject board creation with empty name', () => {
 
@@ -14,7 +14,7 @@ test.describe('TC17: Reject board creation with empty name', () => {
     const boardPage = new BoardPage(page);
 
     await boardPage.addBoardButton.click();
-    await expect(boardPage.boardNameInput).toBeVisible({ timeout: 5000 });
+    await expect(boardPage.boardNameInput).toBeVisible();
 
     // Select project first
     await page.locator('input[placeholder="Select project"]').click();
@@ -36,7 +36,7 @@ test.describe('TC17: Reject board creation with empty name', () => {
     const boardPage = new BoardPage(page);
 
     await boardPage.addBoardButton.click();
-    await expect(boardPage.boardNameInput).toBeVisible({ timeout: 5000 });
+    await expect(boardPage.boardNameInput).toBeVisible();
 
     // Select project first
     await page.locator('input[placeholder="Select project"]').click();
@@ -98,14 +98,14 @@ test.describe('TC19: Accept duplicate list names', () => {
 
     // Create first list
     await listPage.createList(listName);
-    await expect(listPage.listTitle(listName).first()).toBeVisible({ timeout: 5000 });
+    await expect(listPage.listTitle(listName).first()).toBeVisible();
 
     // Create second list with same name
     await listPage.listNameField.fill(listName);
     await listPage.listNameField.press('Enter');
 
     // Both lists should exist
-    await expect(listPage.listTitle(listName)).toHaveCount(2, { timeout: 5000 });
+    await expect(listPage.listTitle(listName)).toHaveCount(2);
 
     // Cleanup: delete both lists (use first() since names are identical)
     await listPage.closeAddListForm();
@@ -113,10 +113,10 @@ test.describe('TC19: Accept duplicate list names', () => {
     await page.getByRole('button', { name: 'Delete List' }).click();
     await page.getByText('Are you sure you want to delete this list').waitFor({ state: 'visible', timeout: 3000 });
     await page.getByRole('button', { name: 'Delete list' }).click();
-    await expect(listPage.listTitle(listName)).toHaveCount(1, { timeout: 5000 });
+    await expect(listPage.listTitle(listName)).toHaveCount(1);
 
     await listPage.deleteList(listName);
-    await expect(listPage.listTitle(listName)).toHaveCount(0, { timeout: 5000 });
+    await expect(listPage.listTitle(listName)).toHaveCount(0);
   });
 });
 
@@ -132,11 +132,11 @@ test.describe('TC20: Long list name handling', () => {
     await listPage.createList(longName);
 
     // List should be created (title element exists with the long name)
-    await expect(listPage.listTitle(longName)).toBeVisible({ timeout: 5000 });
+    await expect(listPage.listTitle(longName)).toBeVisible();
 
     // Cleanup
     await listPage.closeAddListForm();
     await listPage.deleteList(longName);
-    await expect(listPage.listTitle(longName)).toHaveCount(0, { timeout: 5000 });
+    await expect(listPage.listTitle(longName)).toHaveCount(0);
   });
 });

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { ListPage } from '../pageObjects/ListPage';
-import { TEST_USERS } from '../testData';
-import { BASE_URL, BOARD_01, loginToDashboard, getAdminToken, getBoardId, getBoardMembershipId } from '../utils';
+import { ListPage } from '../../pageObjects/ListPage';
+import { TEST_USERS } from '../../testData';
+import { BASE_URL, BOARD_01, loginToDashboard, getAdminToken, getBoardId, getBoardMembershipId } from '../../utils';
 
 test.describe('TC14: Role upgrade - Viewer → Editor', () => {
   // TEST: Verify that upgrading a user's role from Viewer to Editor grants list creation ability
@@ -34,15 +34,15 @@ test.describe('TC14: Role upgrade - Viewer → Editor', () => {
     await page.getByRole('button', { name: 'Back to Project' }).waitFor({ state: 'visible', timeout: 5000 });
 
     // Step 4: Verify "Add list" button is now visible and list creation works
-    await expect(listPage.addListButton).toBeVisible({ timeout: 5000 });
+    await expect(listPage.addListButton).toBeVisible();
 
     const listName = `TC14 List ${Date.now()}`;
     await listPage.createList(listName);
-    await expect(listPage.listTitle(listName)).toBeVisible({ timeout: 5000 });
+    await expect(listPage.listTitle(listName)).toBeVisible();
 
     // Cleanup: delete test list
     await listPage.deleteList(listName);
-    await expect(listPage.listTitle(listName)).toHaveCount(0, { timeout: 5000 });
+    await expect(listPage.listTitle(listName)).toHaveCount(0);
 
     // Cleanup: revert role back to viewer
     await apiContext.patch(`${BASE_URL}/api/board-memberships/${membershipId}`, {
@@ -71,7 +71,7 @@ test.describe('TC15: Role downgrade - Editor → Viewer', () => {
     await page.getByRole('link', { name: BOARD_01, exact: true }).last().click();
     await page.getByRole('button', { name: 'Back to Project' }).waitFor({ state: 'visible', timeout: 5000 });
 
-    await expect(listPage.addListButton).toBeVisible({ timeout: 5000 });
+    await expect(listPage.addListButton).toBeVisible();
 
     // Step 2: Admin downgrades editor to viewer via API
     const updateRes = await apiContext.patch(`${BASE_URL}/api/board-memberships/${membershipId}`, {
@@ -85,7 +85,7 @@ test.describe('TC15: Role downgrade - Editor → Viewer', () => {
     await page.getByRole('button', { name: 'Back to Project' }).waitFor({ state: 'visible', timeout: 5000 });
 
     // Step 4: Verify "Add list" button is gone
-    await expect(listPage.addListButton).toHaveCount(0, { timeout: 5000 });
+    await expect(listPage.addListButton).toHaveCount(0);
 
     // Cleanup: revert role back to editor
     await apiContext.patch(`${BASE_URL}/api/board-memberships/${membershipId}`, {

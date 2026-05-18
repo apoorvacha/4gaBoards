@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { BoardPage } from '../pageObjects/BoardPage';
-import { ROLES, TEST_PROJECT_NAME } from '../testData';
-import { BOARD_01, loginToDashboard } from '../utils';
+import { BoardPage } from '../../pageObjects/BoardPage';
+import { ROLES, TEST_PROJECT_NAME } from '../../testData';
+import { BOARD_01, loginToDashboard } from '../../utils';
 
 test.describe('TC01: Create Board - Role Based Access', () => {
   for (const role of ROLES) {
@@ -16,13 +16,14 @@ test.describe('TC01: Create Board - Role Based Access', () => {
 
       if (role.isProjectManager) {
         await boardPage.createBoard(boardName, TEST_PROJECT_NAME);
-        await expect(boardPage.boardInSidebar(boardName)).toBeVisible({ timeout: 5000 });
+        await expect(boardPage.boardInSidebar(boardName)).toBeVisible();
 
         await boardPage.deleteBoard(boardName);
         await expect(page.getByRole('button', { name: boardName, exact: true })).toHaveCount(0, { timeout: 10000 });
       } else {
         await boardPage.addBoardButton.click();
-        await expect(boardPage.boardNameInput).toBeVisible({ timeout: 5000 });
+        await expect(boardPage.boardNameInput).toBeVisible();
+
         const hasProject = await boardPage.isProjectInAddBoardDropdown(TEST_PROJECT_NAME);
         expect(hasProject).toBe(false);
       }
@@ -45,18 +46,18 @@ test.describe('TC02: Update Board Name - Role Based Access', () => {
         const renamedName = `${boardName} Renamed`;
 
         await boardPage.createBoard(boardName, TEST_PROJECT_NAME);
-        await expect(boardPage.boardInSidebar(boardName)).toBeVisible({ timeout: 5000 });
+        await expect(boardPage.boardInSidebar(boardName)).toBeVisible();
 
         await boardPage.navigateToBoard(boardName);
         await boardPage.renameCurrentBoard(renamedName);
-        await expect(boardPage.boardInSidebar(renamedName)).toBeVisible({ timeout: 5000 });
+        await expect(boardPage.boardInSidebar(renamedName)).toBeVisible();
 
         await boardPage.deleteBoard(renamedName);
         await expect(page.getByRole('button', { name: renamedName, exact: true })).toHaveCount(0, { timeout: 10000 });
       } else {
         await boardPage.navigateToBoard(BOARD_01, 'Project 01');
 
-        await page.getByRole('button', { name: 'Edit Board' }).last().click();
+        await boardPage.openBoardActionsPopup();
         const renameButton = page.getByRole('button', { name: 'Rename Board' });
         await expect(renameButton).toHaveCount(0, { timeout: 3000 });
       }
@@ -78,14 +79,14 @@ test.describe('TC03: Delete Board - Role Based Access', () => {
         const boardName = `TC03 Board ${Date.now()} ${role.name}`;
 
         await boardPage.createBoard(boardName, TEST_PROJECT_NAME);
-        await expect(boardPage.boardInSidebar(boardName)).toBeVisible({ timeout: 5000 });
+        await expect(boardPage.boardInSidebar(boardName)).toBeVisible();
 
         await boardPage.deleteBoard(boardName);
         await expect(page.getByRole('button', { name: boardName, exact: true })).toHaveCount(0, { timeout: 10000 });
       } else {
         await boardPage.navigateToBoard(BOARD_01, 'Project 01');
 
-        await page.getByRole('button', { name: 'Edit Board' }).last().click();
+        await boardPage.openBoardActionsPopup();
         const deleteButton = page.getByRole('button', { name: 'Delete Board' });
         await expect(deleteButton).toHaveCount(0, { timeout: 3000 });
       }
@@ -104,7 +105,7 @@ test.describe('TC04: View Board - Role Based Access', () => {
       const boardPage = new BoardPage(page);
 
       await boardPage.navigateToBoard(BOARD_01, 'Project 01');
-      await expect(boardPage.boardTitle(BOARD_01)).toBeVisible({ timeout: 5000 });
+      await expect(boardPage.boardTitle(BOARD_01)).toBeVisible();
 
       if (role.canEditBoard) {
         await expect(boardPage.addListButton).toBeVisible();

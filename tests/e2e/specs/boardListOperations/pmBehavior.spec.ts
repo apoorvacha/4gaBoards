@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { ListPage } from '../pageObjects/ListPage';
-import { BoardPage } from '../pageObjects/BoardPage';
-import { ADMIN, TEST_USERS, TEST_PROJECT_NAME } from '../testData';
-import { BASE_URL, BOARD_01, loginToDashboard, getAdminToken } from '../utils';
+import { ListPage } from '../../pageObjects/ListPage';
+import { BoardPage } from '../../pageObjects/BoardPage';
+import { ADMIN, TEST_USERS, TEST_PROJECT_NAME } from '../../testData';
+import { BASE_URL, BOARD_01, loginToDashboard, getAdminToken } from '../../utils';
 
 test.describe('TC11: PM has auto-editor on all boards', () => {
   const boardName = `TC11 Board ${Date.now()}`;
@@ -16,7 +16,7 @@ test.describe('TC11: PM has auto-editor on all boards', () => {
     await loginToDashboard(page, ADMIN.username, ADMIN.password);
 
     await boardPage.createBoard(boardName, TEST_PROJECT_NAME);
-    await expect(page.getByRole('button', { name: boardName, exact: true }).first()).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('button', { name: boardName, exact: true }).first()).toBeVisible();
 
     // Step 2: Login as PM in a separate browser context (isolated session)
     const pmContext = await browser.newContext();
@@ -33,11 +33,11 @@ test.describe('TC11: PM has auto-editor on all boards', () => {
     // Step 4: Create a list (proves editor access)
     const listName = `TC11 List ${Date.now()}`;
     await pmListPage.createList(listName);
-    await expect(pmListPage.listTitle(listName)).toBeVisible({ timeout: 5000 });
+    await expect(pmListPage.listTitle(listName)).toBeVisible();
 
     // Cleanup: delete list
     await pmListPage.deleteList(listName);
-    await expect(pmListPage.listTitle(listName)).toHaveCount(0, { timeout: 5000 });
+    await expect(pmListPage.listTitle(listName)).toHaveCount(0);
     await pmContext.close();
 
     // Cleanup: delete board as admin
@@ -125,11 +125,11 @@ test.describe('TC13: Promoting user to PM grants board access', () => {
     // Verify editor access: create a list
     const listName = `TC13 List ${Date.now()}`;
     await listPage.createList(listName);
-    await expect(listPage.listTitle(listName)).toBeVisible({ timeout: 5000 });
+    await expect(listPage.listTitle(listName)).toBeVisible();
 
     // Cleanup: delete the list
     await listPage.deleteList(listName);
-    await expect(listPage.listTitle(listName)).toHaveCount(0, { timeout: 5000 });
+    await expect(listPage.listTitle(listName)).toHaveCount(0);
 
     // Cleanup: remove PM role
     const pmProjectRes = await apiContext.get(`${BASE_URL}/api/projects/${project.id}`, {

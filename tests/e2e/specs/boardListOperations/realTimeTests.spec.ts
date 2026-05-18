@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { ListPage } from '../pageObjects/ListPage';
-import { BoardPage } from '../pageObjects/BoardPage';
-import { ADMIN, TEST_USERS, TEST_PROJECT_NAME } from '../testData';
-import { BASE_URL, BOARD_01, loginToDashboard, loginAndNavigateToBoard, getAdminToken, getBoardId } from '../utils';
+import { ListPage } from '../../pageObjects/ListPage';
+import { BoardPage } from '../../pageObjects/BoardPage';
+import { ADMIN, TEST_USERS, TEST_PROJECT_NAME } from '../../testData';
+import { BASE_URL, BOARD_01, loginToDashboard, loginAndNavigateToBoard, getAdminToken, getBoardId } from '../../utils';
 
 test.describe('TC25: List creation broadcasts', () => {
 
@@ -27,7 +27,7 @@ test.describe('TC25: List creation broadcasts', () => {
     // Step 3: Editor creates a list
     const listName = `TC25 List ${Date.now()}`;
     await editorListPage.createList(listName);
-    await expect(editorListPage.listTitle(listName)).toBeVisible({ timeout: 5000 });
+    await expect(editorListPage.listTitle(listName)).toBeVisible();
 
     // Step 4: Verify list appears in viewer session without reload
     await expect(viewerListPage.listTitle(listName)).toBeVisible({ timeout: 10000 });
@@ -35,7 +35,7 @@ test.describe('TC25: List creation broadcasts', () => {
     // Cleanup: editor deletes the list
     await editorListPage.closeAddListForm();
     await editorListPage.deleteList(listName);
-    await expect(editorListPage.listTitle(listName)).toHaveCount(0, { timeout: 5000 });
+    await expect(editorListPage.listTitle(listName)).toHaveCount(0);
 
     await editorContext.close();
     await viewerContext.close();
@@ -57,7 +57,7 @@ test.describe('TC26: List deletion broadcasts', () => {
 
     const listName = `TC26 List ${Date.now()}`;
     await editorListPage.createList(listName);
-    await expect(editorListPage.listTitle(listName)).toBeVisible({ timeout: 5000 });
+    await expect(editorListPage.listTitle(listName)).toBeVisible();
     await editorListPage.closeAddListForm();
 
     // Step 2: Open same board as viewer
@@ -68,11 +68,11 @@ test.describe('TC26: List deletion broadcasts', () => {
     await loginAndNavigateToBoard(viewerPage, TEST_USERS.viewer.username, TEST_USERS.viewer.password);
 
     // Verify viewer can see the list
-    await expect(viewerListPage.listTitle(listName)).toBeVisible({ timeout: 5000 });
+    await expect(viewerListPage.listTitle(listName)).toBeVisible();
 
     // Step 3: Editor deletes the list
     await editorListPage.deleteList(listName);
-    await expect(editorListPage.listTitle(listName)).toHaveCount(0, { timeout: 5000 });
+    await expect(editorListPage.listTitle(listName)).toHaveCount(0);
 
     // Step 4: Verify list disappears from viewer session without reload
     await expect(viewerListPage.listTitle(listName)).toHaveCount(0, { timeout: 10000 });
@@ -98,7 +98,7 @@ test.describe('TC27: List rename broadcasts', () => {
     const listName = `TC27 List ${Date.now()}`;
     const renamedName = `${listName} Renamed`;
     await editorListPage.createList(listName);
-    await expect(editorListPage.listTitle(listName)).toBeVisible({ timeout: 5000 });
+    await expect(editorListPage.listTitle(listName)).toBeVisible();
     await editorListPage.closeAddListForm();
 
     // Step 2: Open same board as viewer
@@ -109,11 +109,11 @@ test.describe('TC27: List rename broadcasts', () => {
     await loginAndNavigateToBoard(viewerPage, TEST_USERS.viewer.username, TEST_USERS.viewer.password);
 
     // Verify viewer sees the original name
-    await expect(viewerListPage.listTitle(listName)).toBeVisible({ timeout: 5000 });
+    await expect(viewerListPage.listTitle(listName)).toBeVisible();
 
     // Step 3: Editor renames the list
     await editorListPage.renameList(listName, renamedName);
-    await expect(editorListPage.listTitle(renamedName)).toBeVisible({ timeout: 5000 });
+    await expect(editorListPage.listTitle(renamedName)).toBeVisible();
 
     // Step 4: Verify renamed list appears in viewer session without reload
     await expect(viewerListPage.listTitle(renamedName)).toBeVisible({ timeout: 10000 });
@@ -121,7 +121,7 @@ test.describe('TC27: List rename broadcasts', () => {
 
     // Cleanup
     await editorListPage.deleteList(renamedName);
-    await expect(editorListPage.listTitle(renamedName)).toHaveCount(0, { timeout: 5000 });
+    await expect(editorListPage.listTitle(renamedName)).toHaveCount(0);
 
     await editorContext.close();
     await viewerContext.close();
@@ -149,7 +149,7 @@ test.describe('TC28: List reorder broadcasts', () => {
     for (const name of [listA, listB, listC]) {
       await editorListPage.listNameField.fill(name);
       await editorListPage.listNameField.press('Enter');
-      await expect(editorListPage.listTitle(name)).toBeVisible({ timeout: 5000 });
+      await expect(editorListPage.listTitle(name)).toBeVisible();
     }
     await editorListPage.closeAddListForm();
 
@@ -185,7 +185,7 @@ test.describe('TC28: List reorder broadcasts', () => {
     // Cleanup
     for (const name of [listA, listB, listC]) {
       await editorListPage.deleteList(name);
-      await expect(editorListPage.listTitle(name)).toHaveCount(0, { timeout: 5000 });
+      await expect(editorListPage.listTitle(name)).toHaveCount(0);
     }
 
     await editorContext.close();
@@ -210,7 +210,7 @@ test.describe('TC29: Board deletion notifies members', () => {
 
     const boardName = `TC29 Board ${Date.now()}`;
     await adminBoardPage.createBoard(boardName, TEST_PROJECT_NAME);
-    await expect(adminBoardPage.boardInSidebar(boardName)).toBeVisible({ timeout: 5000 });
+    await expect(adminBoardPage.boardInSidebar(boardName)).toBeVisible();
 
     // Add editor and viewer memberships via API
     const boardId = await getBoardId(apiContext, token, boardName);
@@ -236,14 +236,14 @@ test.describe('TC29: Board deletion notifies members', () => {
     const editorPage = await editorContext.newPage();
 
     await loginAndNavigateToBoard(editorPage, TEST_USERS.editor.username, TEST_USERS.editor.password, boardName);
-    await expect(editorPage.getByRole('button', { name: 'Back to Project' })).toBeVisible({ timeout: 5000 });
+    await expect(editorPage.getByRole('button', { name: 'Back to Project' })).toBeVisible();
 
     // Step 3: Open board as viewer
     const viewerContext = await browser.newContext();
     const viewerPage = await viewerContext.newPage();
 
     await loginAndNavigateToBoard(viewerPage, TEST_USERS.viewer.username, TEST_USERS.viewer.password, boardName);
-    await expect(viewerPage.getByRole('button', { name: 'Back to Project' })).toBeVisible({ timeout: 5000 });
+    await expect(viewerPage.getByRole('button', { name: 'Back to Project' })).toBeVisible();
 
     // Step 4: Admin deletes the board
     await adminBoardPage.deleteBoard(boardName);
