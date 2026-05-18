@@ -165,6 +165,8 @@ All passwords for test users: `Test@12345`
 
 ## Notes
 
+- Before running the `run-e2e.md` skill or any tests, make sure the Docker daemon is running on your machine
+- The application must be running via Docker (`docker compose up`) before running tests — it needs to be accessible at `http://localhost:3000`
 - Tests use Chromium by default (configured in `playwright.config.ts`)
 - The setup project runs as a dependency before all test specs
 - When running in parallel (default), some tests may flake due to server load — use `--workers=1` for reliable runs
@@ -182,7 +184,7 @@ This E2E test suite was authored using agentic AI (Claude Code) with the followi
 
 4. **Test Implementation** — Worked on implementing the tests by keeping a human in the loop for every test added. Provided the initial test stubs and progressed while improving test readability and reusability. Followed one test at a time while reviewing, optimizing, and identifying issues with the tests.
 
-5. **Setup & Run Skill** — A Claude Code skill at `.claude/commands/run-e2e.md` automates environment setup (Node.js, pnpm, Playwright browsers) and provides guided test execution for anyone cloning the repo.
+5. **Setup & Run Skill** — A Claude Code skill at `.claude/commands/run-e2e.md` automates environment setup (Node.js, pnpm, Playwright browsers) and provides guided test execution for anyone cloning the repo. **Note:** The application must be running via Docker (`docker compose up`) before using this skill, as it requires the app at `http://localhost:3000`.
 
 **Manual Interventions:**
 - Understood what AI assumes: existing users, project, list, and board

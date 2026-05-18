@@ -50,7 +50,7 @@ node -e "fetch('http://localhost:3000').then(r => console.log('OK: ' + r.status)
 
 Ask the user how they want to run the tests. Present these options:
 
-- **All tests** — `pnpm -C tests test`
+- **All tests** — `pnpm -C tests exec playwright test`
 - **All tests (single worker, recommended for first run)** — `pnpm -C tests exec playwright test --workers=1`
 - **Headed mode (see the browser)** — `pnpm -C tests test:headed`
 - **UI mode (interactive Playwright panel)** — `pnpm -C tests test:ui`
